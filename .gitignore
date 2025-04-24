@@ -1,0 +1,16 @@
+# .gitignore
+
+# Dossier de l'environnement virtuel
+venv/
+.env
+
+# Fichiers de configuration/secret
+*.pyc
+__pycache__/
+*.log
+instance/
+*.sqlite3
+
+# PyCharm, VS Code, etc.
+.idea/
+.vscode/
