@@ -1,19 +1,19 @@
-# Mon Projet To-Do List
+# Backend de Mon Projet To-Do List
 
 ## Description
-Ce projet est une application To-Do List en utilisant Flask pour le back-end et React pour le front-end. Il permet aux utilisateurs de créer, modifier et supprimer des tâches.
+Ce projet est l'API backend pour une application To-Do List. Il est développé en utilisant Flask et gère l'authentification des utilisateurs via JWT, ainsi que les opérations CRUD (création, récupération, mise à jour et suppression) sur les tâches.
 
 ## Fonctionnalités
 - Authentification des utilisateurs avec JWT.
+- Gestion des utilisateurs (création, récupération, mise à jour, suppression).
 - Gestion des tâches (création, récupération, suppression, modification).
-- Interface utilisateur simple.
+- API sécurisée pour interagir avec les tâches et utilisateurs.
 
 ## Installation
 
 ### Prérequis
 - Python 3.x
-- Node.js
-- MySQL (ou autre base de données)
+- MySQL (ou autre base de données compatible)
 
 ### Backend
 1. Clonez le dépôt :
@@ -30,13 +30,33 @@ Ce projet est une application To-Do List en utilisant Flask pour le back-end et 
     pip install -r requirements.txt
     ```
 
-3. Configurez votre base de données et variables d'environnement.
+3. Configurez votre base de données MySQL et créez les tables nécessaires pour les utilisateurs, rôles et tâches. Vous devrez probablement ajuster la configuration de votre base de données dans le fichier `.env` ou un autre fichier de configuration.
 
-4. Lancez l'application :
+4. Lancez l'application Flask :
     ```bash
     python app.py
     ```
 
+   L'API sera accessible par défaut à `http://127.0.0.1:5000`.
+
+## API Endpoints
+
+### Authentification
+- **POST /users/login**: Permet à un utilisateur de se connecter et d'obtenir un token JWT.
+
+### Gestion des utilisateurs (Admin uniquement)
+- **GET /users**: Récupérer tous les utilisateurs (admin uniquement).
+- **GET /users/{id}**: Récupérer un utilisateur par son ID (admin uniquement).
+- **POST /users**: Créer un nouvel utilisateur (admin uniquement).
+- **PUT /users/{id}**: Mettre à jour un utilisateur (admin uniquement).
+- **DELETE /users/{id}**: Supprimer un utilisateur (admin uniquement).
+
+### Gestion des tâches
+- **GET /tasks**: Récupérer toutes les tâches (utilisateur authentifié).
+- **GET /tasks/{id}**: Récupérer une tâche par son ID (utilisateur authentifié).
+- **POST /tasks**: Créer une nouvelle tâche (utilisateur authentifié).
+- **PUT /tasks/{id}**: Mettre à jour une tâche (utilisateur authentifié).
+- **DELETE /tasks/{id}**: Supprimer une tâche (utilisateur authentifié).
 
 ## Contribuer
 1. Fork le projet.
@@ -44,4 +64,3 @@ Ce projet est une application To-Do List en utilisant Flask pour le back-end et 
 3. Commitez vos modifications (`git commit -am 'Ajout de ma fonctionnalité'`).
 4. Poussez vers votre fork (`git push origin feature/ma-fonctionnalite`).
 5. Créez une pull request.
-
