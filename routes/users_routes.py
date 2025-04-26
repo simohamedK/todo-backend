@@ -13,11 +13,12 @@ def register():
     username=data.get("username")
     email=data.get("email")
     password=data.get("password")
+    role=data.get("role")
 
-    if not username or not email or not password :
+    if not username or not email or not password or not role :
         return  jsonify({"error": "All fields are required"}), 400 
 
-    user=add_user(username, email, password)
+    user=add_user(username, email, password, role)
     if not user:
         return jsonify({"error": "Email already exists"}), 400
     

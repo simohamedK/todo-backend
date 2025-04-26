@@ -2,12 +2,20 @@ from db.mysql import get_connection
 from utils.security import PasswordManager
 import mysql.connector
 
-def add_user(username, email, password):
+def add_user(username, email, password,role):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
+        cursor.execute("SELECT * FROM roles WHERE name = %s ",(role,))
+        role= cursor.fetchone()
+        if not role :
+            cursor.close()
+            conn.close()
+            return {"error": "Rôle invalide"}
+
+        role_id=role.get("id")
         password_hached = PasswordManager.hash_password(password)
-        cursor.execute("INSERT INTO users (username, email, password) VALUES (%s,%s,%s)", (username, email, password_hached))
+        cursor.execute("INSERT INTO users (username, email, password, role_id) VALUES (%s,%s,%s,%s)", (username, email, password_hached, role_id))
         conn.commit()
 
         cursor.execute("SELECT * FROM users WHERE id = LAST_INSERT_ID()")
