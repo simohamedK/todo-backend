@@ -14,11 +14,11 @@ def fetch_tasks(user_id):
 
 @tasks_bp.route('/tasks/<int:id>', methods=['GET'])
 @JWTManager.token_required
-def recupererTask(id,user_id):
+def fetch_task(id,user_id):
     task= get_task_by_id(id,user_id)
 
     if not task :
-        return jsonify({"error" : "Task not found"}), 400
+        return jsonify({"error" : "Task not found"}), 404
     
     return jsonify(task)
 
@@ -49,7 +49,7 @@ def modify_task(id,user_id):
     if not title and completed is None and not description :
         return jsonify({'error' : "At least one field (title , completed or description) must be provided"}), 400
     
-    updated_task = update_task(id, title, completed,description)
+    updated_task = update_task(id, title, completed,description,user_id)
 
     if not updated_task:
         return jsonify({"error" : "Task not found"}), 404

@@ -42,7 +42,7 @@ def add_task(title,completed,description,user_id) :
 
     return get_task_by_id(new_task_id)
 
-def update_task(id,title, completed, description):
+def update_task(id,title, completed, description,user_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -55,15 +55,16 @@ def update_task(id,title, completed, description):
     if description :
         updates.append('description = %s')
         values.append(description)
-    if completed :
+    if completed is not None:
         updates.append('completed = %s')
         values.append(completed)
     
     if not updates:
         return None
     
-    query = f"UPDATE tasks SET {', '.join(updates)} WHERE id = %s"
+    query = f"UPDATE tasks SET {', '.join(updates)} WHERE id = %s AND user_id = %s"
     values.append(id)
+    values.append(user_id)
 
     cursor.execute(query, tuple(values))
     conn.commit()
@@ -71,7 +72,7 @@ def update_task(id,title, completed, description):
     cursor.close()
     conn.close()
 
-    return get_task_by_id(id)
+    return get_task_by_id(id, user_id)
 
 def change_status_task(id):
     task = get_task_by_id(id)
