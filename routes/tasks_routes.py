@@ -9,13 +9,13 @@ tasks_bp= Blueprint('tasks', __name__)
 @tasks_bp.route('/tasks', methods=['GET'])
 @JWTManager.token_required
 def fetch_tasks(user_id):
-    tasks=get_all_tasks()
+    tasks=get_all_tasks(user_id)
     return jsonify(tasks)
 
 @tasks_bp.route('/tasks/<int:id>', methods=['GET'])
 @JWTManager.token_required
 def recupererTask(id,user_id):
-    task= get_task_by_id(id)
+    task= get_task_by_id(id,user_id)
 
     if not task :
         return jsonify({"error" : "Task not found"}), 400
@@ -39,16 +39,17 @@ def create_task(user_id):
 
 @tasks_bp.route("/tasks/<int:id>", methods=['PUT'])
 @JWTManager.token_required
-def modify_task(id):
+def modify_task(id,user_id):
     data = request.get_json()
 
     title= data.get('title')
     completed= data.get('completed')
+    description = data.get("description")
 
-    if not title and completed is None:
-        return jsonify({'error' : "At least one field (title or completed) must be provided"}), 400
+    if not title and completed is None and not description :
+        return jsonify({'error' : "At least one field (title , completed or description) must be provided"}), 400
     
-    updated_task = update_task(id, title, completed)
+    updated_task = update_task(id, title, completed,description)
 
     if not updated_task:
         return jsonify({"error" : "Task not found"}), 404
