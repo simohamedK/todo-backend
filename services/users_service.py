@@ -129,8 +129,47 @@ def update_user_by_id(user_id, data):
 
     cursor.close()
     conn.close()
-
     return get_user_by_id(user_id)  
+
+
+def update_user_password_by_id(user_id, data) :
+    old_password = data.get("old_password")
+    new_password = data.get("new_password")
+
+    if not old_password or not new_password :
+        return  {"error" : "tous les champs sont obligatoires"}
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT password FROM users WHERE id = %s", (user_id,))
+        user=cursor.fetchone()
+
+        if not user :
+            return {"error": "Utilisateur non trouvé."}
+        
+        old_password_hashed = user.get("password")
+
+        if not PasswordManager.verify_password(old_password,old_password_hashed):
+            cursor.close()
+            conn.close()
+            return {"error":"Ancien mot de passe incorrect"}
+        
+        new_password_hashed=PasswordManager.hash_password(new_password)
+        
+        cursor.execute(
+            " UPDATE users SET password = %s WHERE id = %s",
+            (new_password_hashed,user_id)
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        print(f"Erreur lors de la mise à jour du mot de passe : {e}")
+        return {"error": "Erreur serveur, réessayez plus tard."}
+    finally:
+        cursor.close()
+        conn.close()
 
 def delete_user_by_id(user_id):
     conn = get_connection()

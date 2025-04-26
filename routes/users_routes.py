@@ -71,6 +71,19 @@ def update_user(user_id):
         return jsonify(updated_user), 200
     return jsonify({"error": "Utilisateur non trouvé ou erreur de mise à jour"}), 400
 
+@users_bp.route("/users/<int:id>/password", methods=["PATCH"])
+@JWTManager.token_required
+def update_user_password(id,user_id):
+    data = request.get_json()
+
+    result = update_user_password_by_id(id, data)
+
+    if isinstance(result, dict) and result.get("error"):
+        return jsonify(result), 400
+
+    return jsonify({"info": "Mot de passe mis à jour avec succès."}), 200
+
+
 # Supprimer un utilisateur
 @users_bp.route("/users/<int:id>", methods=["DELETE"])
 @JWTManager.admin_required  # S'assurer que l'utilisateur est admin pour supprimer un autre utilisateur
