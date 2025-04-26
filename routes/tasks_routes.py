@@ -8,13 +8,13 @@ tasks_bp= Blueprint('tasks', __name__)
 
 @tasks_bp.route('/tasks', methods=['GET'])
 @JWTManager.token_required
-def fetch_tasks():
+def fetch_tasks(user_id):
     tasks=get_all_tasks()
     return jsonify(tasks)
 
 @tasks_bp.route('/tasks/<int:id>', methods=['GET'])
 @JWTManager.token_required
-def recupererTask(id):
+def recupererTask(id,user_id):
     task= get_task_by_id(id)
 
     if not task :
@@ -24,16 +24,16 @@ def recupererTask(id):
 
 @tasks_bp.route('/tasks', methods=['POST'])
 @JWTManager.token_required
-def create_task():
+def create_task(user_id):
     data = request.get_json()
     
     title= data.get('title')
-    completed= data.get('completed', False)
-
+    completed= bool(data.get('completed', False))
+    description = data.get("description")
     if not title:
         return jsonify({"error": "Title is required"}), 400 
     
-    new_task=add_task(title,completed)
+    new_task=add_task(title,completed,description,user_id)
 
     return jsonify(new_task), 201
 

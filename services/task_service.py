@@ -24,22 +24,23 @@ def get_task_by_id(id):
 
     return task
 
-def add_task(title,completed) :
+def add_task(title,completed,description,user_id) :
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("INSERT INTO tasks (title,completed) VALUES (%s,%s)", (title,completed))
+    cursor.execute(
+        "INSERT INTO tasks (title,completed,description,user_id) VALUES (%s,%s,%s,%s)",
+          (title,completed,description,user_id)
+    )
     
-    # Commit pour enregistrer la transaction
     conn.commit()
 
-    cursor.execute("SELECT * FROM tasks WHERE id= LAST_INSERT_ID()")
-    new_task=cursor.fetchone()
+    new_task_id = cursor.lastrowid
 
     cursor.close()
     conn.close()
 
-    return new_task
+    return get_task_by_id(new_task_id)
 
 def update_task(id,title, completed):
     conn = get_connection()
