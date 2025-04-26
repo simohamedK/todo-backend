@@ -58,10 +58,10 @@ def modify_task(id,user_id):
 
 @tasks_bp.route('/tasks/<int:id>',methods=['PATCH'])
 @JWTManager.token_required
-def modify_status_task(id):    
-    updated_task= change_status_task(id)
+def modify_status_task(id,user_id):    
+    updated_task= change_status_task(id,user_id)
     if not updated_task:
-        return jsonify({"Error":"Task not found"}), 404
+        return jsonify({"error":"Task not found"}), 404
     return jsonify(updated_task), 200
 
 @tasks_bp.route('/tasks/<int:id>', methods=['DELETE'])

@@ -40,7 +40,7 @@ def add_task(title,completed,description,user_id) :
     cursor.close()
     conn.close()
 
-    return get_task_by_id(new_task_id)
+    return get_task_by_id(new_task_id,user_id)
 
 def update_task(id,title, completed, description,user_id):
     conn = get_connection()
@@ -74,27 +74,27 @@ def update_task(id,title, completed, description,user_id):
 
     return get_task_by_id(id, user_id)
 
-def change_status_task(id):
-    task = get_task_by_id(id)
-    if not task:
-        return None
-    
+def change_status_task(id,user_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-
-    new_completed= 0 if task["completed"] == 1 else 1
-
-    cursor.execute("UPDATE tasks SET  completed = %s WHERE id = %s ", (new_completed,id ))
-    conn.commit()
-
-    cursor.execute("SELECT * FROM tasks WHERE id= %s", (id,))
-    updated_task=cursor.fetchone()
-
     
-    cursor.close()
-    conn.close()
+    try:
+        task = get_task_by_id(id,user_id)
+        if not task:
+            return None
+        
+        new_completed= 0 if task["completed"] == 1 else 1
 
-    return updated_task
+        cursor.execute(
+            "UPDATE tasks SET  completed = %s WHERE id = %s AND user_id = %s", 
+            (new_completed,id,user_id )
+        )
+        conn.commit()
+
+        return get_task_by_id(id,user_id)
+    finally:
+        cursor.close()
+        conn.close()
 
 def remove_task(id):
 
