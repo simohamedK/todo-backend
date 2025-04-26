@@ -96,19 +96,23 @@ def change_status_task(id,user_id):
         cursor.close()
         conn.close()
 
-def remove_task(id):
-
-    task=get_task_by_id(id)
-    if not task :
-        return False
-
+def remove_task(id,user_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("DELETE FROM tasks WHERE id=%s",(id,))
-    conn.commit()
+    try:
+        task=get_task_by_id(id,user_id)
+        if not task :
+            return False
 
-    cursor.close()
-    conn.close()
-    return True
-
+        cursor.execute("DELETE FROM tasks WHERE id=%s AND user_id = %s",(id,user_id))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Erreur lors de la suppression de la tâche : {e}")
+        conn.rollback()  # Annuler la transaction en cas d'erreur
+        return False
+    finally :
+        cursor.close()
+        conn.close()
+    

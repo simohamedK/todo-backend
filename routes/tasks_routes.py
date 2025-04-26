@@ -66,8 +66,8 @@ def modify_status_task(id,user_id):
 
 @tasks_bp.route('/tasks/<int:id>', methods=['DELETE'])
 @JWTManager.token_required
-def delete_task(id):
-    deleted= remove_task(id)
+def delete_task(id,user_id):
+    deleted= remove_task(id,user_id)
 
     if not deleted :
         return jsonify({"error" : "Task not found"}), 404
